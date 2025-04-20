@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "344072126869",
+    "project_id": "saas-cf290",
+    "storage_bucket": "saas-cf290.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344072126869:android:479f4a8db064136c3bb69c",
+        "android_client_info": {
+          "package_name": "com.saas.saas_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvTegmAAsW3vo5GTzs9_FU07hfpMl1VVo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344072126869:android:5635584e54639b123bb69c",
+        "android_client_info": {
+          "package_name": "com.saas_project.saas_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvTegmAAsW3vo5GTzs9_FU07hfpMl1VVo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
