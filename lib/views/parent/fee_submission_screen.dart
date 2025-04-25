@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:saas_project/views/parent/payment_history_screen.dart';
 
+import '../../controllers/PaymentController.dart';
+
 class FeeSubmissionScreen extends StatefulWidget {
   const FeeSubmissionScreen({super.key});
 
@@ -10,26 +12,33 @@ class FeeSubmissionScreen extends StatefulWidget {
   State<FeeSubmissionScreen> createState() => _FeeSubmissionScreenState();
 }
 
+// Update fee_submission_screen.dart
 class _FeeSubmissionScreenState extends State<FeeSubmissionScreen> {
   final _amountController = TextEditingController();
+  final _studentNameController = TextEditingController();
+  final _classNameController = TextEditingController();
   String _selectedMethod = 'JazzCash';
 
   Future<void> _submitFee() async {
     final amount = double.tryParse(_amountController.text);
-    if (amount == null) return;
+    if (amount == null ||
+        _studentNameController.text.isEmpty ||
+        _classNameController.text.isEmpty) {
+      Get.snackbar('Error', 'Please fill all fields');
+      return;
+    }
 
-    final paymentData = {
-      'amount': amount,
-      'date': DateTime.now(),
-      'method': _selectedMethod,
-      'status': 'Success',
-    };
-
-    await FirebaseFirestore.instance.collection('payments').add(paymentData);
-    Get.to(PaymentHistoryScreen);
-
-    Get.snackbar('Success', 'Fee submitted successfully!');
-    // Navigate to history screen
+    try {
+      await Get.find<PaymentController>().submitPayment(
+        amount: amount,
+        method: _selectedMethod,
+        studentName: _studentNameController.text,
+        className: _classNameController.text,
+      );
+      Get.off(() => PaymentHistoryScreen());
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    }
   }
 
   @override
@@ -41,6 +50,16 @@ class _FeeSubmissionScreenState extends State<FeeSubmissionScreen> {
         child: Column(
           children: [
             TextField(
+              controller: _studentNameController,
+              decoration: const InputDecoration(labelText: 'Student Name'),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _classNameController,
+              decoration: const InputDecoration(labelText: 'Class Name'),
+            ),
+            const SizedBox(height: 10),
+            TextField(
               controller: _amountController,
               decoration: const InputDecoration(labelText: 'Amount'),
               keyboardType: TextInputType.number,
@@ -49,7 +68,10 @@ class _FeeSubmissionScreenState extends State<FeeSubmissionScreen> {
             DropdownButton<String>(
               value: _selectedMethod,
               items: ['JazzCash', 'Cash', 'Bank Transfer'].map((method) {
-                return DropdownMenuItem(value: method, child: Text(method));
+                return DropdownMenuItem(
+                  value: method,
+                  child: Text(method),
+                );
               }).toList(),
               onChanged: (value) {
                 setState(() {

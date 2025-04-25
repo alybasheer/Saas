@@ -43,8 +43,9 @@ class FeeReportsScreen extends StatelessWidget {
               child: FutureBuilder<QuerySnapshot>(
                 future: FirebaseFirestore.instance.collection('payments').get(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData)
+                  if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
+                  }
 
                   final payments = snapshot.data!.docs;
 

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:saas_project/controllers/auth_controller.dart';
+import 'AdminFeeReportsScreen.dart';
 import 'fee_reports.dart';
 import 'fee_stucture_screen.dart';
 
@@ -7,11 +11,20 @@ class AdminDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthController authController = Get.put(AuthController());
     return Scaffold(
       appBar: AppBar(
         title: const Text("Admin Dashboard"),
         centerTitle: true, // Centering the app bar title
-        backgroundColor: Colors.blueAccent, // Custom background color
+        backgroundColor: Colors.blueAccent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await authController.signOut();// Call signOut
+              Get.offAllNamed('/');  // Redirect to login screen
+            },)
+        ],// Custom background color
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -47,47 +60,38 @@ class AdminDashboard extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Generate Reports Button
+            // Update admin_dashboard.dart
+// Change the Generate Reports button to:
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const FeeReportsScreen(),
-                  ),
-                );
+                Get.to(() => const AdminFeeReportsScreen());
               },
               icon: const Icon(Icons.report),
               label: const Text("Generate Reports"),
               style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                backgroundColor: Colors.green, // Button color
+                backgroundColor: Colors.green,
               ),
             ),
             const SizedBox(height: 20),
 
             // Manage Fee Structure Button
+            // In admin_dashboard.dart, update the Manage Fee Structure button:
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => FeeStructureScreen(),
-                  ),
-                );
+                Get.to(() => FeeStructureScreen());
               },
               icon: const Icon(Icons.settings),
               label: const Text("Manage Fee Structure"),
               style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                backgroundColor: Colors.orange, // Button color
+                backgroundColor: Colors.orange,
               ),
             ),
             const Spacer(),

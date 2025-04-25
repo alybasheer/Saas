@@ -2,31 +2,55 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class NotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
-  // Initialize FCM and setup handlers
+  /// Initializes FCM permissions and message handlers
   Future<void> init() async {
-    await _fcm.requestPermission();
-    FirebaseMessaging.onMessage.listen(_handleMessage);
+    try {
+      await _fcm.requestPermission();
+
+      // Handle foreground messages
+      FirebaseMessaging.onMessage.listen(_handleMessage);
+
+      // Optionally handle background and terminated state messages
+      // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    } catch (e) {
+      debugPrint('FCM Init Error: $e');
+    }
   }
 
+  /// Display received message as a Snackbar
   void _handleMessage(RemoteMessage message) {
-    Get.snackbar(
-      message.notification?.title ?? 'Notification',
-      message.notification?.body ?? '',
-    );
+    final title = message.notification?.title ?? 'Notification';
+    final body = message.notification?.body ?? '';
+
+    if (body.isNotEmpty) {
+      Get.snackbar(
+        title,
+        body,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 
-  // Send reminder to a user
+  /// Sends a reminder (just logs here; you'd use Firebase Functions in production)
   Future<void> sendReminder(String userId, String message) async {
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    final token = userDoc.data()?['fcmToken'];
-    if (token != null) {
-      // In a real app, call FCM API here (e.g., via Firebase Functions)
-      debugPrint('Sending to $token: $message');
+    try {
+      final doc =
+      await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+      final token = doc.data()?['fcmToken'];
+
+      if (token != null && token.isNotEmpty) {
+        // In real apps, use Firebase Cloud Functions or external API
+        debugPrint('Mock sending message to $token: $message');
+      } else {
+        debugPrint('User $userId has no FCM token.');
+      }
+    } catch (e) {
+      debugPrint('Error sending reminder: $e');
     }
   }
 }

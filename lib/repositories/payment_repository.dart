@@ -8,6 +8,8 @@ class PaymentRepository {
     required String userId,
     required double amount,
     required String method,
+    required String studentName,
+    required String className,
   }) async {
     await _firestore.runTransaction((transaction) async {
       final docRef = _firestore.collection('payments').doc();
@@ -16,6 +18,8 @@ class PaymentRepository {
         'amount': amount,
         'method': method,
         'status': 'completed',
+        'studentName': studentName,
+        'className': className,
         'date': FieldValue.serverTimestamp(),
       });
     });
@@ -30,4 +34,26 @@ class PaymentRepository {
         .get();
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
+  // Add new method for admin to view all payments
+  // Add new method for admin to view all payments
+  Future<List<Map<String, dynamic>>> getAllPayments({
+    String? className,
+    String? studentName,
+  }) async {
+    Query query = _firestore.collection('payments').orderBy('date', descending: true);
+
+    if (className != null) {
+      query = query.where('className', isEqualTo: className);
+    }
+
+    if (studentName != null) {
+      query = query.where('studentName', isEqualTo: studentName);
+    }
+
+    final snapshot = await query.get();
+    return snapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+  }
 }
+

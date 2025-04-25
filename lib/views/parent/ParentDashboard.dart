@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:saas_project/controllers/auth_controller.dart';
 import 'package:saas_project/views/parent/payment_history_screen.dart';
 import 'fee_submission_screen.dart';
 
 class ParentDashboard extends StatelessWidget {
-  const ParentDashboard({super.key});
+   ParentDashboard({super.key});
+   AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Parent Dashboard"),
+        actions: [
+      IconButton(
+      icon: const Icon(Icons.logout),
+      onPressed: () async {
+        await authController.signOut();// Call signOut
+        Get.offAllNamed('/');  // Redirect to login screen
+      },)
+        ],
         centerTitle: true, // Centering the app bar title
         backgroundColor: Colors.blueAccent, // Custom background color
       ),
